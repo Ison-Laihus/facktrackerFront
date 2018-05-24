@@ -1,0 +1,2241 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="learn javascript by www.liaoxuefeng.com">
+    <title>Face Tracker</title>
+    <link rel="stylesheet" href="./static/css/bootstrap.css">
+    <link rel="stylesheet" href="./static/css/style.css">
+    <link rel="stylesheet" href="./static/css/jquery-labelauty.css">
+    <script src="./static/js/jquery-2.2.2.js"></script>
+    <script src="./static/js/bootstrap.js"></script>
+</head>
+
+<body>
+    <div id="important" style="color:#cdbfe3; background-color:#6f5499; padding:30px 0; margin:-20px 0 20px 0;">
+        <div class="container">
+            <h1 style="color:#fff; font-size:60px">Face Tracker</h1>
+            <p style="font-size:24px; line-height:48px">Generate face pictures from features of face</p>
+        </div>
+    </div>
+
+    <div>
+        <input type="file" name="img" id="file" required/>
+        <button id="submit">submit</button>
+    </div>
+    
+    <div class="container">
+        <div class="row">
+            <h3>Base Picture</h3>
+            <!-- <p>picture number: {{ num+1 }}</p> -->
+            <ul class="dowebok">
+                <li><input type="radio" name="radio" class="model_type" data-labelauty="男性模板" value="0" checked></li>
+                <li><input type="radio" name="radio" class="model_type" data-labelauty="女性模板" value="1"></li>
+            </ul>
+            <div class="col-md-6 col-sm-12">
+                <div class="well" style="position: relative;">
+                    <img id="imgArea" src="./pictures/aobama.jpg" alt="base picture">
+                    <!--<canvas id="pixCanvas"></canvas>-->
+                    <svg id="pixSvg" version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-12">
+                <div class="panel panel-warning">
+                    <div class="panel-heading"><font color="#f00">*Features</font> —— you can change to generate new picture</div>
+                    <div class="panel-body">
+
+                        <ul id="myTab" class="nav nav-tabs">
+                            <li class="active"><a href="#contour" data-toggle="tab">脸部轮廓</a></li>
+                            <li><a href="#eyebrow" data-toggle="tab">眉毛</a></li>
+                            <li><a href="#eye" data-toggle="tab">眼睛</a></li>
+                            <li><a href="#nose" data-toggle="tab">鼻子</a></li>
+                            <li><a href="#mouse" data-toggle="tab">嘴巴</a></li>
+                        </ul>
+                        <div id="myTabContent" class="tab-content">
+                            <div class="tab-pane fade in active" id="contour">
+
+                                <div class="form-group border_panel" id="contour_chin">
+                                    <label class="control-label">contour_chin</label>
+                                    <div class="row">
+                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                            <div>
+                                                <span class="inline_block span_left fz_12">左</span>
+                                                <span class="inline_block span_right fz_12">右</span>
+                                            </div>
+                                            <input type="range" min="-50" max="50" value="0" id="contour_chin_x" class="contour_chin form-control"/>
+                                        </div>
+                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                            <div>
+                                                <span class="inline_block span_left fz_12">上</span>
+                                                <span class="inline_block span_right fz_12">下</span>
+                                            </div>
+                                            <input type="range" min="-50" max="50" value="0" id="contour_tip_y" class="contour_chin form-control"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <ul id="myTab2" class="nav nav-tabs">
+                                    <li class="active"><a href="#contour_left" data-toggle="tab">左边脸部轮廓</a></li>
+                                    <li><a href="#contour_right" data-toggle="tab">右边脸部轮廓</a></li>
+                                </ul>
+
+                                <div id="myTabContent2" class="tab-content scroll_500">
+
+                                    <div class="tab-pane fade in active" id="contour_left">
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">contour_left_1</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_left_1_x" class="contour_left form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_left_1_y" class="contour_left form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">contour_left_2</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_left_2_x" class="contour_left form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_left_2_y" class="contour_left form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">contour_left_3</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_left_3_x" class="contour_left form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_left_3_y" class="contour_left form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">contour_left_4</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_left_4_x" class="contour_left form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_left_4_y" class="contour_left form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">contour_left_5</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_left_5_x" class="contour_left form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_left_5_y" class="contour_left form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">contour_left_6</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_left_6_x" class="contour_left form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_left_6_y" class="contour_left form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">contour_left_7</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_left_7_x" class="contour_left form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_left_7_y" class="contour_left form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">contour_left_8</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_left_8_x" class="contour_left form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_left_8_y" class="contour_left form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">contour_left_9</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_left_9_x" class="contour_left form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_left_9_y" class="contour_left form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">contour_left_10</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_left_10_x" class="contour_left form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_left_10_y" class="contour_left form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">contour_left_11</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_left_11_x" class="contour_left form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_left_11_y" class="contour_left form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">contour_left_12</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_left_12_x" class="contour_left form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_left_12_y" class="contour_left form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">contour_left_13</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_left_13_x" class="contour_left form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_left_13_y" class="contour_left form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">contour_left_14</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_left_14_x" class="contour_left form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_left_14_y" class="contour_left form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">contour_left_15</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_left_15_x" class="contour_left form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_left_15_y" class="contour_left form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">contour_left_16</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_left_16_x" class="contour_left form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_left_16_y" class="contour_left form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="contour_right">
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">contour_right_1</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_right_1_x" class="contour_left form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_right_1_y" class="contour_left form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">contour_right_2</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_right_2_x" class="contour_left form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_right_2_y" class="contour_left form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">contour_right_3</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_right_3_x" class="contour_left form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_right_3_y" class="contour_left form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">contour_right_4</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_right_4_x" class="contour_left form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_right_4_y" class="contour_left form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">contour_right_5</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_right_5_x" class="contour_left form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_right_5_y" class="contour_left form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">contour_right_6</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_right_6_x" class="contour_left form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_right_6_y" class="contour_left form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">contour_right_7</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_right_7_x" class="contour_left form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_right_7_y" class="contour_left form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">contour_right_8</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_right_8_x" class="contour_left form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_right_8_y" class="contour_left form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">contour_right_9</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_right_9_x" class="contour_left form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_right_9_y" class="contour_left form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">contour_right_10</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_right_10_x" class="contour_left form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_right_10_y" class="contour_left form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">contour_right_11</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_right_11_x" class="contour_left form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_right_11_y" class="contour_left form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">contour_right_12</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_right_12_x" class="contour_left form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_right_12_y" class="contour_left form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">contour_right_13</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_right_13_x" class="contour_left form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_right_13_y" class="contour_left form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">contour_right_14</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_right_14_x" class="contour_left form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_right_14_y" class="contour_left form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">contour_right_15</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_right_15_x" class="contour_left form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_right_15_y" class="contour_left form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">contour_right_16</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_right_16_x" class="contour_left form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="contour_right_16_y" class="contour_left form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="tab-pane fade pd_10" id="eyebrow">
+
+                                <ul id="myTab3" class="nav nav-tabs">
+                                    <li class="active"><a href="#left_eyebrow" data-toggle="tab">左边眉毛</a></li>
+                                    <li><a href="#right_eyebrow" data-toggle="tab">右边眉毛</a></li>
+                                </ul>
+
+                                <div id="myTabContent3" class="tab-content scroll_500">
+
+                                    <div class="tab-pane fade in active" id="left_eyebrow">
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">left_eyebrow_left_corner</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="left_eyebrow_left_corner_x" class="left_eyebrow form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="left_eyebrow_left_corner_y" class="left_eyebrow form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">left_eyebrow_upper_left_quarter</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="left_eyebrow_upper_left_quarter_x" class="left_eyebrow form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="left_eyebrow_upper_left_quarter_y" class="left_eyebrow form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">left_eyebrow_upper_middle</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="left_eyebrow_upper_middle_x" class="left_eyebrow form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="left_eyebrow_upper_middle_y" class="left_eyebrow form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">left_eyebrow_upper_right_quarter</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="left_eyebrow_upper_right_quarter_x" class="left_eyebrow form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="left_eyebrow_upper_right_quarter_y" class="left_eyebrow form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">left_eyebrow_upper_right_corner</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="left_eyebrow_upper_right_corner_x" class="left_eyebrow form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="left_eyebrow_upper_right_corner_y" class="left_eyebrow form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">left_eyebrow_lower_left_quarter</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="left_eyebrow_lower_left_quarter_x" class="left_eyebrow form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="left_eyebrow_lower_left_quarter_y" class="left_eyebrow form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">left_eyebrow_lower_middle</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="left_eyebrow_lower_middle_x" class="left_eyebrow form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="left_eyebrow_lower_middle_y" class="left_eyebrow form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">left_eyebrow_lower_middle</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="left_eyebrow_lower_right_quarter_x" class="left_eyebrow form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="left_eyebrow_lower_right_quarter_y" class="left_eyebrow form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">left_eyebrow_lower_right_corner</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="left_eyebrow_lower_right_corner_x" class="left_eyebrow form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="left_eyebrow_lower_right_corner_y" class="left_eyebrow form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+
+                                    <div class="tab-pane fade in active" id="right_eyebrow">
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">right_eyebrow_left_corner</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="right_eyebrow_left_corner_x" class="left_eyebrow form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="right_eyebrow_left_corner_y" class="left_eyebrow form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">right_eyebrow_upper_left_quarter</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="right_eyebrow_upper_left_quarter_x" class="left_eyebrow form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="right_eyebrow_upper_left_quarter_y" class="left_eyebrow form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">right_eyebrow_upper_middle</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="right_eyebrow_upper_middle_x" class="left_eyebrow form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="right_eyebrow_upper_middle_y" class="left_eyebrow form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">right_eyebrow_upper_right_quarter</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="right_eyebrow_upper_right_quarter_x" class="left_eyebrow form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="right_eyebrow_upper_right_quarter_y" class="left_eyebrow form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">right_eyebrow_upper_right_corner</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="right_eyebrow_upper_right_corner_x" class="left_eyebrow form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="right_eyebrow_upper_right_corner_y" class="left_eyebrow form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">right_eyebrow_lower_left_quarter</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="right_eyebrow_lower_left_quarter_x" class="left_eyebrow form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="right_eyebrow_lower_left_quarter_y" class="left_eyebrow form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">right_eyebrow_lower_middle</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="right_eyebrow_lower_middle_x" class="left_eyebrow form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="right_eyebrow_lower_middle_y" class="left_eyebrow form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">right_eyebrow_lower_middle</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="right_eyebrow_lower_right_quarter_x" class="left_eyebrow form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="right_eyebrow_lower_right_quarter_y" class="left_eyebrow form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">right_eyebrow_lower_right_corner</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="right_eyebrow_lower_right_corner_x" class="left_eyebrow form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="right_eyebrow_lower_right_corner_y" class="left_eyebrow form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+                            <div class="tab-pane fade pd_10" id="eye">
+                                <ul id="myTab4" class="nav nav-tabs">
+                                    <li class="active"><a href="#left_eye" data-toggle="tab">左眼</a></li>
+                                    <li><a href="#right_eye" data-toggle="tab">右眼</a></li>
+                                </ul>
+                                <div id="myTabContent4" class="tab-content scroll_500">
+                                    <div class="tab-pane fade in active" id="left_eye">
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">left_eye_bottom</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="left_eye_bottom_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="left_eye_bottom_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">left_eye_center</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="left_eye_center_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="left_eye_center_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">left_eye_left_corner</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="left_eye_left_corner_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="left_eye_left_corner_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">left_eye_lower_left_quarter</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="left_eye_lower_left_quarter_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="left_eye_lower_left_quarter_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">left_eye_lower_right_quarter</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="left_eye_lower_right_quarter_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="left_eye_lower_right_quarter_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!--<div class="form-group border_panel">-->
+                                            <!--<label class="control-label">left_eye_pupil</label>-->
+                                            <!--<div class="row">-->
+                                                <!--<div class="col-md-6 col-sm-6 col-xs-12">-->
+                                                    <!--<div>-->
+                                                        <!--<span class="inline_block span_left fz_12">左</span>-->
+                                                        <!--<span class="inline_block span_right fz_12">右</span>-->
+                                                    <!--</div>-->
+                                                    <!--<input type="range" min="-50" max="50" value="0" id="left_eye_pupil_x" class="left_eye form-control"/>-->
+                                                <!--</div>-->
+                                                <!--<div class="col-md-6 col-sm-6 col-xs-12">-->
+                                                    <!--<div>-->
+                                                        <!--<span class="inline_block span_left fz_12">上</span>-->
+                                                        <!--<span class="inline_block span_right fz_12">下</span>-->
+                                                    <!--</div>-->
+                                                    <!--<input type="range" min="-50" max="50" value="0" id="left_eye_pupil_y" class="left_eye form-control"/>-->
+                                                <!--</div>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">left_eye_right_corner</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="left_eye_right_corner_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="left_eye_right_corner_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">left_eye_top</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="left_eye_top_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="left_eye_top_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">left_eye_upper_left_quarter</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="left_eye_upper_left_quarter_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="left_eye_upper_left_quarter_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">left_eye_upper_right_quarter</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="left_eye_upper_right_quarter_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="left_eye_upper_right_quarter_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="tab-pane fade" id="right_eye">
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">right_eye_bottom</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="right_eye_bottom_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="right_eye_bottom_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">right_eye_center</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="right_eye_center_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="right_eye_center_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">right_eye_left_corner</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="right_eye_left_corner_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="right_eye_left_corner_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">right_eye_lower_left_quarter</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="right_eye_lower_left_quarter_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="right_eye_lower_left_quarter_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">right_eye_lower_right_quarter</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="right_eye_lower_right_quarter_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="right_eye_lower_right_quarter_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!--<div class="form-group border_panel">-->
+                                            <!--<label class="control-label">right_eye_pupil</label>-->
+                                            <!--<div class="row">-->
+                                                <!--<div class="col-md-6 col-sm-6 col-xs-12">-->
+                                                    <!--<div>-->
+                                                        <!--<span class="inline_block span_left fz_12">左</span>-->
+                                                        <!--<span class="inline_block span_right fz_12">右</span>-->
+                                                    <!--</div>-->
+                                                    <!--<input type="range" min="-50" max="50" value="0" id="right_eye_pupil_x" class="left_eye form-control"/>-->
+                                                <!--</div>-->
+                                                <!--<div class="col-md-6 col-sm-6 col-xs-12">-->
+                                                    <!--<div>-->
+                                                        <!--<span class="inline_block span_left fz_12">上</span>-->
+                                                        <!--<span class="inline_block span_right fz_12">下</span>-->
+                                                    <!--</div>-->
+                                                    <!--<input type="range" min="-50" max="50" value="0" id="right_eye_pupil_y" class="left_eye form-control"/>-->
+                                                <!--</div>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">right_eye_right_corner</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="right_eye_right_corner_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="right_eye_right_corner_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">right_eye_top</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="right_eye_top_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="right_eye_top_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">right_eye_upper_left_quarter</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="right_eye_upper_left_quarter_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="right_eye_upper_left_quarter_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">right_eye_upper_right_quarter</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="right_eye_upper_right_quarter_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="right_eye_upper_right_quarter_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade pd_10" id="nose">
+
+                                <div class="form-group border_panel">
+                                    <label class="control-label">nose_middle_contour</label>
+                                    <div class="row">
+                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                            <div>
+                                                <span class="inline_block span_left fz_12">左</span>
+                                                <span class="inline_block span_right fz_12">右</span>
+                                            </div>
+                                            <input type="range" min="-50" max="50" value="0" id="nose_middle_contour_x" class="left_eye form-control"/>
+                                        </div>
+                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                            <div>
+                                                <span class="inline_block span_left fz_12">上</span>
+                                                <span class="inline_block span_right fz_12">下</span>
+                                            </div>
+                                            <input type="range" min="-50" max="50" value="0" id="nose_middle_contour_y" class="left_eye form-control"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <ul id="myTab5" class="nav nav-tabs">
+                                    <li class="active"><a href="#nose_left_contour" data-toggle="tab">鼻子左轮廓</a></li>
+                                    <li><a href="#nose_right_contour" data-toggle="tab">鼻子右轮廓</a></li>
+                                    <li><a href="#nose_bridge" data-toggle="tab">鼻梁</a></li>
+                                </ul>
+                                <div id="myTabContent5" class="tab-content scroll_500">
+                                    <div class="tab-pane fade in active" id="nose_left_contour">
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">nose_left_contour1</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="nose_left_contour1_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="nose_left_contour1_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">nose_left_contour2</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="nose_left_contour2_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="nose_left_contour2_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">nose_left_contour3</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="nose_left_contour3_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="nose_left_contour3_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">nose_left_contour4</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="nose_left_contour4_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="nose_left_contour4_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">nose_left_contour5</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="nose_left_contour5_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="nose_left_contour5_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="tab-pane fade" id="nose_right_contour">
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">nose_right_contour1</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="nose_right_contour1_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="nose_right_contour1_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">nose_right_contour2</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="nose_right_contour2_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="nose_right_contour2_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">nose_right_contour3</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="nose_right_contour3_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="nose_right_contour3_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">nose_right_contour4</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="nose_right_contour4_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="nose_right_contour4_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">nose_right_contour5</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="nose_right_contour5_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="nose_right_contour5_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="nose_bridge">
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">nose_bridge1</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="nose_bridge1_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="nose_bridge1_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">nose_bridge2</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="nose_bridge2_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="nose_bridge2_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">nose_bridge3</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="nose_bridge3_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="nose_bridge3_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">nose_tip</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="nose_tip_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="nose_tip_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            <div class="tab-pane fade" id="mouse">
+
+                                <ul id="myTab6" class="nav nav-tabs">
+                                    <li class="active"><a href="#mouse_middle_contour" data-toggle="tab">上下嘴唇重合轮廓</a></li>
+                                    <li><a href="#mouse_upper_contour" data-toggle="tab">上嘴唇轮廓</a></li>
+                                    <li><a href="#mouse_lower_contour" data-toggle="tab">下嘴唇轮廓</a></li>
+                                </ul>
+                                <div id="myTabContent6" class="tab-content scroll_500">
+                                    <div class="tab-pane fade in active" id="mouse_middle_contour">
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">mouth_left_corner</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="mouth_left_corner_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="mouth_left_corner_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">mouth_upper_lip_left_contour4 (mouth_lower_lip_left_contour1)</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="mouth_upper_lip_left_contour4_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="mouth_upper_lip_left_contour4_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">mouth_upper_lip_left_contour3</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="mouth_upper_lip_left_contour3_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="mouth_upper_lip_left_contour3_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">mouth_lower_lip_top</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="mouth_lower_lip_top_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="mouth_lower_lip_top_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">mouth_upper_lip_right_contour4 (mouth_lower_lip_right_contour1)</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="mouth_upper_lip_right_contour4_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="mouth_upper_lip_right_contour4_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">mouth_upper_lip_right_contour3</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="mouth_upper_lip_right_contour3_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="mouth_upper_lip_right_contour3_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">mouth_right_corner</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="mouth_right_corner_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="mouth_right_corner_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="tab-pane fade" id="mouse_upper_contour">
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">mouth_upper_lip_left_contour2</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="mouth_upper_lip_left_contour2_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="mouth_upper_lip_left_contour2_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">mouth_upper_lip_left_contour1</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="mouth_upper_lip_left_contour1_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="mouth_upper_lip_left_contour1_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">mouth_upper_lip_top</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="mouth_upper_lip_top_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="mouth_upper_lip_top_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">mouth_upper_lip_right_contour1</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="mouth_upper_lip_right_contour1_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="mouth_upper_lip_right_contour1_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">mouth_upper_lip_right_contour2</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="mouth_upper_lip_right_contour2_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="mouth_upper_lip_right_contour2_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="tab-pane fade" id="mouse_lower_contour">
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">mouth_lower_lip_left_contour2</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="mouth_lower_lip_left_contour2_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="mouth_lower_lip_left_contour2_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">mouth_lower_lip_left_contour3</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="mouth_lower_lip_left_contour3_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="mouth_lower_lip_left_contour3_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">mouth_lower_lip_bottom</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="mouth_lower_lip_bottom_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="mouth_lower_lip_bottom_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">mouth_lower_lip_right_contour3</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="mouth_lower_lip_right_contour3_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="mouth_lower_lip_right_contour3_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group border_panel">
+                                            <label class="control-label">mouth_lower_lip_right_contour2</label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">左</span>
+                                                        <span class="inline_block span_right fz_12">右</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="mouth_lower_lip_right_contour2_x" class="left_eye form-control"/>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div>
+                                                        <span class="inline_block span_left fz_12">上</span>
+                                                        <span class="inline_block span_right fz_12">下</span>
+                                                    </div>
+                                                    <input type="range" min="-50" max="50" value="0" id="mouth_lower_lip_right_contour2_y" class="left_eye form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="panel-footer">
+                        <button class="btn btn-danger" id="gen_stick_figure">gen_stick_figure</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="col-md-12 col-sm-12">
+        <div class="container">
+            <div id="pipei" style="display: none; width: 100%; border: 1px solid #ddd; border-radius: 5px; overflow: auto; padding: 20px; margin-bottom: 20px;">
+                <div class="col-md-4 col-sm-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-body">
+                            <img id="pipei1" src="/pictures/pipei1.jpg" alt="matched picture">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-body">
+                            <img id="pipei1" src="/pictures/pipei1.jpg" alt="matched picture">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-body">
+                            <img id="pipei1" src="/pictures/pipei1.jpg" alt="matched picture">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer style="background-color:#ddd; padding: 20px 0;">
+        <div class="container">
+            <!-- <p>This JavaScript course is created by @追猎者.</p> -->
+            <p>Code licensed <a target="_blank" href="https://github.com/michaelliao/learn-javascript/blob/master/LICENSE">Apache</a>.</p>
+        </div>
+    </footer>
+    
+    <script src="./static/js/index.js"></script>
+    <script src="./static/js/jquery-labelauty.js"></script>
+    <script src="./static/js/draw.js"></script>
+</body>
+
+</html>

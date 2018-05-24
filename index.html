@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="learn javascript by www.liaoxuefeng.com">
+    <title>Face Tracker</title>
+    <link rel="stylesheet" href="./static/css/bootstrap.css">
+    <link rel="stylesheet" href="./static/css/style.css">
+    <link rel="stylesheet" href="./static/css/jquery-labelauty.css">
+    <script src="./static/js/jquery-2.2.2.js"></script>
+    <script src="./static/js/bootstrap.js"></script>
+</head>
+
+<body>
+<div id="important" style="color:#cdbfe3; background-color:#6f5499; padding:30px 0; margin:-20px 0 20px 0;">
+    <div class="container">
+        <h1 style="color:#fff; font-size:60px">Face Tracker</h1>
+        <p style="font-size:24px; line-height:48px">Generate face pictures from features of face</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <h3>Base Picture</h3>
+        <div style="margin-left: 15px; padding-bottom: 20px;">
+            <button class="btn btn-warning" data-toggle="modal" data-target="#myModal">select picture model</button>
+        </div>
+        <div class="col-md-4 com-sm-12">
+            <div class="well" style="position: relative;">
+                <img id="imgArea" src="./pictures/man.png" alt="base picture" width="100%">
+                <img id="stickFigure" src="" alt="stick figure" class="a-hide" width="100%">
+                <svg id="pixSvg" version="1.1" xmlns="http://www.w3.org/2000/svg" width="100%"></svg>
+            </div>
+        </div>
+        <div class="col-md-8 com-sm-12">
+            <!-- step one -->
+            <div class="panel panel-warning" id="stepOne">
+                <div class="panel-heading" style="height: 51px;"><font color="#f00">Tools Panel</font>
+                    <div id="loading" class="a-hide">
+                        <img src="./pictures/loading.gif" alt="loading...">
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="nothing_panel">
+                        <h4>Feature points information</h4>
+                        <p class="blue" id="features_desc">
+                            <!--未选中任何特征点，请在左侧使用鼠标选择-->
+                            No feature points are selected, use the mouse to select on the left
+                        </p>
+                    </div>
+                    <div class="nothing-panel" id="operationPanel">
+                        <div class="row separate_bar_2 separate_bar_grey"></div>
+                        <h4>Operation options</h4>
+
+                        <ul id="myTab6" class="nav nav-tabs">
+                            <li class="active"><a href="#single_change" data-toggle="tab" id="single">single change</a></li>
+                            <li><a href="#group_change" data-toggle="tab" id="group">group change</a></li>
+                        </ul>
+                        <div id="myTabContent6" class="tab-content" style="padding-top: 10px;">
+                            <div class="tab-pane fade in active" id="single_change">
+                                <ul class="dowebok">
+                                    <li><input type="checkbox" class="operation" data-labelauty="Binding symmetrical organs" value="0" checked></li>
+                                </ul>
+                            </div>
+                            <div class="tab-pane fade " id="group_change">
+                                <ul class="dowebok">
+                                    <li><input type="radio" name="part" class="part" data-labelauty="contour" value="0"></li>
+                                    <li><input type="radio" name="part" class="part" data-labelauty="left eyebrow" value="1"></li>
+                                    <li><input type="radio" name="part" class="part" data-labelauty="right eyebrow" value="2"></li>
+                                    <li><input type="radio" name="part" class="part" data-labelauty="left eye" value="3"></li>
+                                    <li><input type="radio" name="part" class="part" data-labelauty="right eye" value="4"></li>
+                                    <li><input type="radio" name="part" class="part" data-labelauty="nose" value="5"></li>
+                                    <li><input type="radio" name="part" class="part" data-labelauty="mouth" value="6"></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hidden-panel" id="stick_figure_operation">
+                        <div class="row separate_bar_2 separate_bar_grey"></div>
+                        <div class="nothing_panel">
+                            <h4>Operation Of Stick Figure</h4>
+                            <ul class="dowebok">
+                                <li><input type="radio" name="pix_result" class="pix_result" data-labelauty="Only show source picture" value="0"></li>
+                                <li><input type="radio" name="pix_result" class="pix_result" data-labelauty="Only show stick figure" value="1" checked></li>
+                                <li><input type="radio" name="pix_result" class="pix_result" data-labelauty="Show both to compare" value="2"></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <button class="btn btn-primary" id="gen_stick_figure">Generate Stick Figure</button>
+                    <button class="btn btn-info a-hide" id="gen_average_face">Generate Prototype Face</button>
+                    <button class="btn btn-success a-hide" id="gen_face_feature">Draw Face Features</button>
+                    <button class="btn btn-danger a-hide" id="search">Search</button>
+                </div>
+            </div>
+            <!-- step one end -->
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myModal3" tabindex="-1" role="dialog" aria-labelledby="myModalLabel3" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel3"><font color="#f00">Error</font></h4>
+            </div>
+            <div class="modal-body">
+                <p id="detailError">
+                    Timeout! The internet is poor, please try again!
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">close</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">Select Picture Model</h4>
+            </div>
+            <div class="modal-body">
+                <ul class="dowebok">
+                    <li><input type="radio" name="model_type" class="model_type" data-labelauty="male model" value="0" checked></li>
+                    <li><input type="radio" name="model_type" class="model_type" data-labelauty="female model" value="1"></li>
+                </ul>
+                <div id="maleWale">
+                    <div class="img-panel">
+                        <img src="./pictures/man.png" alt="male model 1">
+                    </div>
+                    <div class="img-panel">
+                        <img src="./pictures/man_2.png" alt="male model 1">
+                    </div>
+                    <div class="img-panel">
+                        <img src="./pictures/man_3.png" alt="male model 1">
+                    </div>
+                    <div class="img-panel">
+                        <img src="./pictures/man_4.png" alt="male model 1">
+                    </div>
+                    <div class="img-panel">
+                        <img src="./pictures/man_5.png" alt="male model 1">
+                    </div>
+                    <div class="img-panel">
+                        <img src="./pictures/man_6.png" alt="male model 1">
+                    </div>
+                </div>
+                <div id="femaleWale" class="a-hide">
+                    <div class="img-panel">
+                        <img src="./pictures/woman_1.png" alt="female model 1">
+                    </div>
+                    <div class="img-panel">
+                        <img src="./pictures/woman_2.png" alt="female model 1">
+                    </div>
+                    <div class="img-panel">
+                        <img src="./pictures/woman_3.png" alt="female model 1">
+                    </div>
+                    <div class="img-panel">
+                        <img src="./pictures/woman_4.png" alt="female model 1">
+                    </div>
+                    <div class="img-panel">
+                        <img src="./pictures/woman_5.png" alt="female model 1">
+                    </div>
+                    <div class="img-panel">
+                        <img src="./pictures/woman_6.png" alt="female model 1">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">close</button>
+                <button type="button" class="btn btn-primary" id="submit" data-dismiss="modal">submit</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel2">Similar Faces</h4>
+            </div>
+            <div class="modal-body" style="max-height: 400px;" id="searchResult">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">close</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<footer style="background-color:#ddd; padding: 20px 0;">
+    <div class="container">
+        <!-- <p>This JavaScript course is created by @追猎者.</p> -->
+        <p>Code licensed <a target="_blank" href="https://github.com/michaelliao/learn-javascript/blob/master/LICENSE">Apache</a>.</p>
+    </div>
+</footer>
+
+<script src="./static/js/index.js"></script>
+<script src="./static/js/jquery-labelauty.js"></script>
+<script src="./static/js/draw2.js"></script>
+</body>
+
+</html>
